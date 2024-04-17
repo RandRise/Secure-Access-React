@@ -6,6 +6,7 @@ import {
     REGISTER_USER_REQUEST,
     REGISTER_USER_SUCCESS
 } from "../../Actions/actions";
+
 import { Authentication } from "../../Services/apiService";
 
 
@@ -14,6 +15,7 @@ function* registerUserSaga(action: any): Generator<any, void, any> {
         const response = yield call(Authentication.registerUserAPI, action.payload);
         if (response.Code === 200) {
             yield put({ type: REGISTER_USER_SUCCESS, payload: response })
+
         }
         else {
             yield put({ type: GET_GENERAL_RESPONSE, payload: response })

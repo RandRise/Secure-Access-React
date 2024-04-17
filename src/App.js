@@ -1,12 +1,15 @@
-import RegisterForm from "./Components/registerForm";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import ConfirmationForm from "./Components/confirmationForm";
+import RegistrationForm from "./Components/registerForm"
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-
-      </header>
-      <RegisterForm />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<RegistrationForm />} />
+        <Route path="/confirmation" element={<ConfirmationForm />} />
+      </Routes>
+    </Router>
   );
 }
 
