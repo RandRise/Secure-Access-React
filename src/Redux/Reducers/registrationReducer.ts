@@ -1,6 +1,7 @@
 import {
     REGISTER_USER_SUCCESS,
-    CONFIRM_EMAIL_SUCCESS
+    CONFIRM_EMAIL_SUCCESS,
+    RESEND_VERIFICATION_CODE
 } from "../../Actions/actions";
 import { registrationState } from "../../States/registerationState";
 
@@ -16,6 +17,8 @@ const registrationReducer = (state = initialState, action: any): registrationSta
             return { ...state, loading: true, response: action.payload, isSuccess: action.payload.Code === 200 }
         case CONFIRM_EMAIL_SUCCESS:
             return { ...state, loading: true, response: action.payload }
+        case RESEND_VERIFICATION_CODE:
+            return {...state, loading: true, response: action.payload}
         default:
             return { ...state };
     }

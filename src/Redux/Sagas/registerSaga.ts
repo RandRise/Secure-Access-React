@@ -4,7 +4,9 @@ import {
     CONFIRM_EMAIL_SUCCESS,
     GET_GENERAL_RESPONSE,
     REGISTER_USER_REQUEST,
-    REGISTER_USER_SUCCESS
+    REGISTER_USER_SUCCESS,
+    RESEND_VERIFICATION_CODE,
+    RESEND_VERIFICATION_CODE_REQUEST
 } from "../../Actions/actions";
 
 import { Authentication } from "../../Services/apiService";
@@ -40,6 +42,23 @@ function* confirmEmailSaga(action: any): Generator<any, void, any> {
     }
 }
 
+function* resendVerificationCodeSaga(action: any): Generator<any, void, any> {
+    try {
+        const response = yield call(Authentication.resendVerificationCodeAPI, action.payload);
+        if (response.Code === 200) {
+            yield put({ type: RESEND_VERIFICATION_CODE, payload: response });
+        } else {
+            yield put({ type: GET_GENERAL_RESPONSE, payload: response })
+        }
+    } catch (error) {
+        console.error("Error", error)
+    }
+}
+
+function* watchResendVerificationCodeSaga(): Generator<any, void, any> {
+    yield takeLatest(RESEND_VERIFICATION_CODE_REQUEST, resendVerificationCodeSaga)
+}
+
 function* watchConfirmEmailSaga(): Generator<any, void, any> {
     yield takeLatest(CONFIRM_EMAIL_REQUEST, confirmEmailSaga);
 }
@@ -53,5 +72,6 @@ export default function* registrationSaga() {
     yield all([
         watchRegisterUserSaga(),
         watchConfirmEmailSaga(),
+        watchResendVerificationCodeSaga(),
     ]);
 };
