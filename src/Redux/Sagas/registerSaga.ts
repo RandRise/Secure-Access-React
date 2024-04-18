@@ -44,7 +44,10 @@ function* confirmEmailSaga(action: any): Generator<any, void, any> {
 
 function* resendVerificationCodeSaga(action: any): Generator<any, void, any> {
     try {
+        console.log("EMAIL:", action.payload)
+
         const response = yield call(Authentication.resendVerificationCodeAPI, action.payload);
+
         if (response.Code === 200) {
             yield put({ type: RESEND_VERIFICATION_CODE, payload: response });
         } else {

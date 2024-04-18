@@ -1,10 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { Button, Form, Input } from "antd";
 import { confirmationModel } from "../Models/confirmationModel";
 import { CONFIRM_EMAIL_REQUEST } from "../Actions/actions";
+import ResendverificationButton from "./resendConfirmation"
+import { ICommonResponse } from "../Common/commonInterfaces";
 interface ConfirmationFormProps {
     onSubmit: (user: confirmationModel) => void
+    response: ICommonResponse;
 }
 
 const ConfirmationForm: React.FC<ConfirmationFormProps> = (props: ConfirmationFormProps) => {
@@ -49,7 +53,9 @@ const ConfirmationForm: React.FC<ConfirmationFormProps> = (props: ConfirmationFo
                 <Button type="default" htmlType="submit">
                     Confirm
                 </Button>
+                <ResendverificationButton  response={props.response}/>
             </Form.Item>
+
 
         </Form >
     )

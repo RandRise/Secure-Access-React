@@ -16,12 +16,15 @@ const RegistrationForm: React.FC<RegistrationFormProps> = (props: RegistrationFo
     const navigate = useNavigate();
     useEffect(() => {
         if (props.response) {
+
             (props.response?.Code === 200) ?
+            
                 notification.success({ message: props.response?.Message })
                 :
                 notification.error({ message: props.response?.Message })
+
         }
-    }, [props.response])
+    }, [props.response?.Code])
     useEffect(() => {
         if (props.isSuccess) {
             navigate("/confirmation")

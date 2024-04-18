@@ -28,7 +28,8 @@ export class Authentication {
 
     static resendVerificationCodeAPI = async (formData: registrationModel): Promise<ICommonResponse> => {
         try {
-            const response = await axios.post(RESEND_VERIFICATION_CODE_API, formData.email);
+            console.log(typeof(formData), formData)
+            const response = await axios.post(RESEND_VERIFICATION_CODE_API, {email: formData});
             return response.data;
         } catch (error: any) {
             throw error.response?.data ?? error.message;
