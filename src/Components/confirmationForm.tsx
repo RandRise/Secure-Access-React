@@ -10,7 +10,7 @@ import { ICommonResponse } from "../Common/commonInterfaces";
 interface ConfirmationFormProps {
     onSubmit: (user: confirmationModel) => void;
     response: ICommonResponse;
-    isEmailConfirmed: boolean;
+    isConfirmedEmail: boolean;
 }
 
 const ConfirmationForm: React.FC<ConfirmationFormProps> = (props: ConfirmationFormProps) => {
@@ -19,15 +19,15 @@ const ConfirmationForm: React.FC<ConfirmationFormProps> = (props: ConfirmationFo
     const userEmail = localStorage.getItem('userEmail') || '';
 
     useEffect(() => {
-        if (props.isEmailConfirmed ) {
+        if (props.isConfirmedEmail ) {
             navigate("/login"); 
         }
-    }, [props.isEmailConfirmed, navigate]);
+    }, [props.isConfirmedEmail, navigate]);
 
     const onFinish = (values: confirmationModel) => {
         props.onSubmit(values);
         form.resetFields();
-        console.log("Confirmation",props.isEmailConfirmed)
+        console.log("Confirmation",props.isConfirmedEmail)
 
     }
 
@@ -74,7 +74,7 @@ const mapStateToProps = (state: any) => {
     return {
         confirmations: state.confirmations.confirmations,
         response: state.confirmations.response,
-        isEmailConfirmed: state.confirmations.isEmailConfirmed
+        isConfirmedEmail: state.confirmations.isConfirmedEmail
 
     }
 }
