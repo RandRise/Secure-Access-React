@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, notification } from 'antd';
+import { Button, Card, Form, Input, notification } from 'antd';
 import { registrationModel } from "../Models/registrationModel";
 import { REGISTER_USER_REQUEST } from "../Actions/actions";
 import { ICommonResponse } from "../Common/commonInterfaces";
@@ -36,6 +36,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = (props: RegistrationFo
     }
 
     return (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>
+        <Card title= "Registration" style={{ width: 400, backgroundColor: '#96bfff', borderRadius: 20}}>
         <Form
             form={form}
             onFinish={onFinish}
@@ -83,6 +85,8 @@ const RegistrationForm: React.FC<RegistrationFormProps> = (props: RegistrationFo
             </Form.Item>
 
         </Form>
+        </Card>
+        </div>
     );
 }
 const mapStateToProps = (state: any) => {

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Button, Form, Input } from 'antd';
+import { Button, Card, Form, Input, notification } from 'antd';
 import { userLoginModel } from '../Models/userLoginModel'
 import { ICommonResponse } from '../Common/commonInterfaces';
 import { USER_LOGIN_REQUEST } from '../Actions/actions';
@@ -10,39 +10,49 @@ interface LoginFormProps {
     response: ICommonResponse
 }
 
+
 const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const [form] = Form.useForm();
-
+    useEffect(() => {
+        if (props.response) {
+            (props.response.Code === 200) ? notification.success({ message: props.response.Message })
+                :
+                notification.error({ message: props.response.Message })
+        }
+    }, [props.response])
     const onFinish = (values: any) => {
         props.onSubmit(values);
         form.resetFields();
     }
 
     return (
-        <div>
-            <Form
-                form={form}
-                layout='vertical'
-                onFinish={onFinish}
-            >
-                <Form.Item
-                    name='email'
-                    label='E-mail'
-                    rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}>
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    name='password'
-                    label='Password'
-                    rules={[{ required: true, type: 'string', message: 'Please enter a valid password' }]}>
-                    <Input.Password />
-                </Form.Item>
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Login
-                    </Button>
-                </Form.Item>
-            </Form>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>
+
+            <Card title="Sign in" style={{ width: 400, backgroundColor: '#96bfff', borderRadius: 20 }}>
+                <Form
+                    form={form}
+                    layout='vertical'
+                    onFinish={onFinish}
+                >
+                    <Form.Item
+                        name='email'
+                        label='E-mail'
+                        rules={[{ required: true, type: 'email', message: 'Please enter a valid email' }]}>
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name='password'
+                        label='Password'
+                        rules={[{ required: true, type: 'string', message: 'Please enter a valid password' }]}>
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Login
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Card>
         </div>
     )
 }

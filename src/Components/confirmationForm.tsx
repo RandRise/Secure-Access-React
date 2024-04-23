@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input } from "antd";
+import { Button, Card, Form, Input, notification } from "antd";
 import { confirmationModel } from "../Models/confirmationModel";
 import { CONFIRM_EMAIL_REQUEST } from "../Actions/actions";
 import ResendverificationButton from "./resendConfirmation";
@@ -19,54 +19,66 @@ const ConfirmationForm: React.FC<ConfirmationFormProps> = (props: ConfirmationFo
     const userEmail = localStorage.getItem('userEmail') || '';
 
     useEffect(() => {
-        if (props.isConfirmedEmail ) {
-            navigate("/login"); 
+        if (props.response) {
+            (props.response.Code === 200) ? notification.success({ message: props.response.Message })
+                :
+                notification.error({ message: props.response.Message })
+        }
+    }, [props.response])
+    useEffect(() => {
+        if (props.isConfirmedEmail) {
+            navigate("/login");
         }
     }, [props.isConfirmedEmail, navigate]);
 
     const onFinish = (values: confirmationModel) => {
         props.onSubmit(values);
         form.resetFields();
-        console.log("Confirmation",props.isConfirmedEmail)
+        console.log("Confirmation", props.isConfirmedEmail)
 
     }
 
     return (
-        <Form
-            form={form}
-            initialValues={{ email: userEmail }}
-            onFinish={onFinish}
-            layout="vertical"
-        >
-            <Form.Item
-                name="email"
-                label="E-mail"
-                rules={[{
-                    required: true,
-                    type: "email",
-                    message: 'Please enter a valid email address'
-                }]}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item
-                name="verficationCode"
-                label="Verification Code"
-                rules={[{
-                    required: true,
-                    type: "string",
-                    message: 'Enter verification code'
-                }]}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item>
-                <Button type="default" htmlType="submit">
-                    Confirm
-                </Button>
-                <ResendverificationButton response={props.response} />
-            </Form.Item>
-        </Form>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>
+            <Card title="Verification" style={{ width: 400, backgroundColor: '#96bfff', borderRadius: 20 }}>
+
+                <Form
+                    form={form}
+                    initialValues={{ email: userEmail }}
+                    onFinish={onFinish}
+                    layout="vertical"
+                >
+                    <Form.Item
+                        name="email"
+                        label="E-mail"
+                        rules={[{
+                            required: true,
+                            type: "email",
+                            message: 'Please enter a valid email address'
+                        }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        name="verficationCode"
+                        label="Verification Code"
+                        rules={[{
+                            required: true,
+                            type: "string",
+                            message: 'Enter verification code'
+                        }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Confirm
+                        </Button>
+                        <ResendverificationButton response={props.response} />
+                    </Form.Item>
+                </Form>
+            </Card>
+        </div>
     );
 }
 
