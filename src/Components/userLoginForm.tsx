@@ -1,6 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { Form, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { userLoginModel } from '../Models/userLoginModel'
 import { ICommonResponse } from '../Common/commonInterfaces';
 import { USER_LOGIN_REQUEST } from '../Actions/actions';
@@ -37,7 +37,11 @@ const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                     rules={[{ required: true, type: 'string', message: 'Please enter a valid password' }]}>
                     <Input.Password />
                 </Form.Item>
-
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Login
+                    </Button>
+                </Form.Item>
             </Form>
         </div>
     )
@@ -45,15 +49,15 @@ const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
 
 const mapStateToProps = (state: any) => {
     return {
-        registrations: state.registrations.registrations,
-        response: state.registrations.response,
-        // isSuccess: state.registrations.isSuccess
+        logins: state.logins.logins,
+        response: state.logins.response,
+        isUserLoginSuccess: state.logins.isUserLoginSuccess,
     }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onSubmit: (user: userLoginModel) => dispatch({type:USER_LOGIN_REQUEST, payload: user})
+        onSubmit: (user: userLoginModel) => dispatch({ type: USER_LOGIN_REQUEST, payload: user })
     }
 }
 
