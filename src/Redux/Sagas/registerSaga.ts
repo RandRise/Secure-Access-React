@@ -6,7 +6,9 @@ import {
     REGISTER_USER_REQUEST,
     REGISTER_USER_SUCCESS,
     RESEND_VERIFICATION_CODE,
-    RESEND_VERIFICATION_CODE_REQUEST
+    RESEND_VERIFICATION_CODE_REQUEST,
+    USER_LOGIN_REQUEST,
+    USER_LOGIN_SUCCESS
 } from "../../Actions/actions";
 
 import { Authentication } from "../../Services/apiService";
@@ -15,9 +17,9 @@ import { Authentication } from "../../Services/apiService";
 function* registerUserSaga(action: any): Generator<any, void, any> {
     try {
         const response = yield call(Authentication.registerUserAPI, action.payload);
-        if (response.Code === 200) {
-            yield put({ type: REGISTER_USER_SUCCESS, payload: response })
+        if (response.Code === 200 ) {
 
+            yield put({ type: REGISTER_USER_SUCCESS, payload: response })
         }
         else {
             yield put({ type: GET_GENERAL_RESPONSE, payload: response })
@@ -29,6 +31,8 @@ function* registerUserSaga(action: any): Generator<any, void, any> {
 
 function* confirmEmailSaga(action: any): Generator<any, void, any> {
     try {
+        console.log("Email confirmation", action)
+
         const response = yield call(Authentication.confirmUserAPI, action.payload);
         if (response.Code === 200) {
 
@@ -44,7 +48,6 @@ function* confirmEmailSaga(action: any): Generator<any, void, any> {
 
 function* resendVerificationCodeSaga(action: any): Generator<any, void, any> {
     try {
-        console.log("EMAIL:", action.payload)
 
         const response = yield call(Authentication.resendVerificationCodeAPI, action.payload);
 
@@ -58,17 +61,36 @@ function* resendVerificationCodeSaga(action: any): Generator<any, void, any> {
     }
 }
 
-function* watchResendVerificationCodeSaga(): Generator<any, void, any> {
-    yield takeLatest(RESEND_VERIFICATION_CODE_REQUEST, resendVerificationCodeSaga)
+function* userLoginSaga(action: any): Generator<any, void, any> {
+    try {
+        const response = yield call(Authentication.loginAPI, action.payload);
+
+        if (response.Code === 200 && action.payload.isSuccess === true) {
+            yield put({ type: USER_LOGIN_SUCCESS, payload: response });
+        } else {
+            yield put({ type: GET_GENERAL_RESPONSE, payload: response });
+        }
+    } catch (error) {
+        console.error("Error Logging In", error)
+    }
 }
 
-function* watchConfirmEmailSaga(): Generator<any, void, any> {
-    yield takeLatest(CONFIRM_EMAIL_REQUEST, confirmEmailSaga);
-}
 
 
 function* watchRegisterUserSaga(): Generator<any, void, any> {
     yield takeLatest(REGISTER_USER_REQUEST, registerUserSaga);
+
+}
+function* watchConfirmEmailSaga(): Generator<any, void, any> {
+    yield takeLatest(CONFIRM_EMAIL_REQUEST, confirmEmailSaga);
+}
+
+function* watchResendVerificationCodeSaga(): Generator<any, void, any> {
+    yield takeLatest(RESEND_VERIFICATION_CODE_REQUEST, resendVerificationCodeSaga)
+}
+
+function* watchUserLoginSaga(): Generator<any, void, any> {
+    yield takeLatest(USER_LOGIN_REQUEST, userLoginSaga);
 }
 
 export default function* registrationSaga() {
@@ -76,5 +98,6 @@ export default function* registrationSaga() {
         watchRegisterUserSaga(),
         watchConfirmEmailSaga(),
         watchResendVerificationCodeSaga(),
+        watchUserLoginSaga(),
     ]);
 };

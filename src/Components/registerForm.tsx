@@ -14,26 +14,20 @@ interface RegistrationFormProps {
 const RegistrationForm: React.FC<RegistrationFormProps> = (props: RegistrationFormProps) => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
+
     useEffect(() => {
         if (props.response) {
-
-            (props.response?.Code === 200) ?
-            
-                notification.success({ message: props.response?.Message })
+            (props.response.Code === 200) ? notification.success({ message: props.response.Message })
                 :
-                notification.error({ message: props.response?.Message })
-
+                notification.error({ message: props.response.Message })
         }
-    }, [props.response?.Code])
+    }, [props.response])
+
     useEffect(() => {
-        if (props.isSuccess) {
-            navigate("/confirmation")
-
-        }
-    }, [props.isSuccess, navigate])
-
-
-
+        if (props.isSuccess ) {
+            navigate("/confirmation");
+        } 
+    }, [props.isSuccess, navigate]);
     const onFinish = (values: registrationModel) => {
         props.onSubmit(values);
         localStorage.setItem('userEmail', values.email);
@@ -101,7 +95,8 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onSubmit: (user: registrationModel) => dispatch({ type: REGISTER_USER_REQUEST, payload: user })
+        onSubmit: (user: registrationModel) => dispatch({ type: REGISTER_USER_REQUEST, payload: user }),
+
     }
 }
 
