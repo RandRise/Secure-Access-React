@@ -4,7 +4,6 @@ import confirmationReducer from "./Reducers/confirmationReducer"
 import { legacy_createStore as createStore, combineReducers } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { applyMiddleware } from "redux";
-import { composeWithDevTools } from "redux-devtools-extension";
 import userLoginReducer from "./Reducers/userLoginReducer";
 
 const rootReducer = combineReducers({
@@ -15,7 +14,7 @@ const rootReducer = combineReducers({
 
 const sagaMiddleWare = createSagaMiddleware();
 let middleware = [sagaMiddleWare];
-const store = createStore (rootReducer, composeWithDevTools(applyMiddleware(...middleware)));
+const store = createStore (rootReducer, applyMiddleware(...middleware));
 
 sagaMiddleWare.run(rootSaga);
 
