@@ -1,18 +1,24 @@
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import { useNavigate } from 'react-router-dom';
 import { Button, Card, Form, Input, notification } from 'antd';
 import { userLoginModel } from '../Models/userLoginModel'
 import { ICommonResponse } from '../Common/commonInterfaces';
-import { USER_LOGIN_REQUEST } from '../Actions/actions';
-
+import { STORE_TOKEN, USER_LOGIN_REQUEST } from '../Actions/actions';
+import { tokenModel } from '../Models/tokenModel';
 interface LoginFormProps {
     onSubmit: (user: userLoginModel) => void;
     response: ICommonResponse
+    isUserLoginSuccess: boolean;
+    storeToken: (token: tokenModel) => void;
 }
 
 
 const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
+
+
     useEffect(() => {
         if (props.response) {
             (props.response.Code === 200) ? notification.success({ message: props.response.Message })
@@ -20,9 +26,20 @@ const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
                 notification.error({ message: props.response.Message })
         }
     }, [props.response])
-    const onFinish = (values: any) => {
+
+    useEffect(() => {
+        if (props.isUserLoginSuccess && props.response.Data.Token) {
+            console.log("Token", props.response.Data.Token,"RefreshToken", props.response.Data.RefreshToken)
+
+            navigate("/employee");
+        }
+    }, [props.isUserLoginSuccess, navigate]);
+
+    const onFinish = (values: userLoginModel) => {
         props.onSubmit(values);
         form.resetFields();
+
+        console.log("userlogin success", props.isUserLoginSuccess)
     }
 
     return (
@@ -67,7 +84,8 @@ const mapStateToProps = (state: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        onSubmit: (user: userLoginModel) => dispatch({ type: USER_LOGIN_REQUEST, payload: user })
+        onSubmit: (user: userLoginModel) => dispatch({ type: USER_LOGIN_REQUEST, payload: user }),
+        storeToken: (token: tokenModel) => dispatch({ type: STORE_TOKEN, payload: token })
     }
 }
 

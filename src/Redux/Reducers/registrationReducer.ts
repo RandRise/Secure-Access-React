@@ -1,7 +1,6 @@
 import {
     REGISTER_USER_SUCCESS,
     RESEND_VERIFICATION_CODE,
-    USER_LOGIN_SUCCESS,
     GET_GENERAL_RESPONSE,
 
 } from "../../Actions/actions";
@@ -18,8 +17,6 @@ const registrationReducer = (state = initialState, action: any): registrationSta
     switch (action.type) {
         case REGISTER_USER_SUCCESS:
             return { ...state, loading: false, response: action.payload, isSuccess: true }
-        case USER_LOGIN_SUCCESS:
-            return { ...state, loading: false, response: action.payload, isSuccess: false };
         case RESEND_VERIFICATION_CODE:
             return { ...state, loading: false, response: action.payload, isSuccess: false };
         case GET_GENERAL_RESPONSE:

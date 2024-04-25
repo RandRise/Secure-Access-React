@@ -7,6 +7,7 @@ import {
     REGISTER_USER_SUCCESS,
     RESEND_VERIFICATION_CODE,
     RESEND_VERIFICATION_CODE_REQUEST,
+    STORE_TOKEN,
     USER_LOGIN_REQUEST,
     USER_LOGIN_SUCCESS
 } from "../../Actions/actions";
@@ -17,7 +18,7 @@ import { Authentication } from "../../Services/apiService";
 function* registerUserSaga(action: any): Generator<any, void, any> {
     try {
         const response = yield call(Authentication.registerUserAPI, action.payload);
-        if (response.Code === 200 ) {
+        if (response.Code === 200) {
 
             yield put({ type: REGISTER_USER_SUCCESS, payload: response })
         }
@@ -65,8 +66,9 @@ function* userLoginSaga(action: any): Generator<any, void, any> {
     try {
         const response = yield call(Authentication.loginAPI, action.payload);
 
-        if (response.Code === 200 && action.payload.isSuccess === true) {
+        if (response.Code === 200 && response.Data.Token) {
             yield put({ type: USER_LOGIN_SUCCESS, payload: response });
+            yield put ({ type: STORE_TOKEN, payload: action.payload})
         } else {
             yield put({ type: GET_GENERAL_RESPONSE, payload: response });
         }

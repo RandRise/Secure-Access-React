@@ -47,6 +47,7 @@ const ConfirmationForm: React.FC<ConfirmationFormProps> = (props: ConfirmationFo
                     initialValues={{ email: userEmail }}
                     onFinish={onFinish}
                     layout="vertical"
+                    autoComplete="false"
                 >
                     <Form.Item
                         name="email"

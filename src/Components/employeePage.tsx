@@ -1,9 +1,14 @@
 import React from 'react'
+interface employeePageProps {
+}
 
-function employeePage() {
+export const EmployeePage: React.FC = (props: employeePageProps) => {
   return (
-    <div>Hello From OutSide</div>
+    <div>
+      <h1>employeePage</h1>
+    </div>
   )
 }
 
-export default employeePage
+export default EmployeePage;
+
