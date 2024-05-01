@@ -7,7 +7,6 @@ import {
     REGISTER_USER_SUCCESS,
     RESEND_VERIFICATION_CODE,
     RESEND_VERIFICATION_CODE_REQUEST,
-    STORE_TOKEN,
     USER_LOGIN_REQUEST,
     USER_LOGIN_SUCCESS
 } from "../../Actions/actions";
@@ -22,11 +21,9 @@ function* registerUserSaga(action: any): Generator<any, void, any> {
 
             yield put({ type: REGISTER_USER_SUCCESS, payload: response })
         }
-        else {
-            yield put({ type: GET_GENERAL_RESPONSE, payload: response })
-        }
-    } catch (error) {
-        console.log(error);
+
+    } catch (response: any) {
+        yield put({ type: GET_GENERAL_RESPONSE, payload: response })
     }
 }
 
@@ -65,10 +62,10 @@ function* resendVerificationCodeSaga(action: any): Generator<any, void, any> {
 function* userLoginSaga(action: any): Generator<any, void, any> {
     try {
         const response = yield call(Authentication.loginAPI, action.payload);
+        console.log("RESPONSE", response)
 
-        if (response.Code === 200 && response.Data.Token) {
+        if (response.Code === 200) {
             yield put({ type: USER_LOGIN_SUCCESS, payload: response });
-            yield put ({ type: STORE_TOKEN, payload: action.payload})
         } else {
             yield put({ type: GET_GENERAL_RESPONSE, payload: response });
         }

@@ -20,7 +20,7 @@ const RegistrationForm: React.FC<RegistrationFormProps> = (props: RegistrationFo
             (props.response?.Code === 200) ?
                 notification.success({ message: props.response?.Message })
                 :
-                notification.error({ message: props.response?.Message })
+                notification.error({ message: props.response.Message })
         }
     }, [props.response])
 

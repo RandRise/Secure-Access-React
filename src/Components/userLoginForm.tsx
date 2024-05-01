@@ -4,15 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button, Card, Form, Input, notification } from 'antd';
 import { userLoginModel } from '../Models/userLoginModel'
 import { ICommonResponse } from '../Common/commonInterfaces';
-import { STORE_TOKEN, USER_LOGIN_REQUEST } from '../Actions/actions';
-import { tokenModel } from '../Models/tokenModel';
+import { USER_LOGIN_REQUEST } from '../Actions/actions';
+import axios from 'axios';
 interface LoginFormProps {
     onSubmit: (user: userLoginModel) => void;
     response: ICommonResponse
     isUserLoginSuccess: boolean;
-    storeToken: (token: tokenModel) => void;
 }
-
 
 const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const [form] = Form.useForm();
@@ -28,19 +26,17 @@ const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     }, [props.response])
 
     useEffect(() => {
-        if (props.isUserLoginSuccess && props.response.Data.Token) {
-            console.log("Token", props.response.Data.Token,"RefreshToken", props.response.Data.RefreshToken)
-
+        if (props.isUserLoginSuccess) {
             navigate("/employee");
         }
     }, [props.isUserLoginSuccess, navigate]);
 
+
     const onFinish = (values: userLoginModel) => {
         props.onSubmit(values);
         form.resetFields();
-
-        console.log("userlogin success", props.isUserLoginSuccess)
-    }
+ 
+}
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>
@@ -79,13 +75,13 @@ const mapStateToProps = (state: any) => {
         logins: state.logins.logins,
         response: state.logins.response,
         isUserLoginSuccess: state.logins.isUserLoginSuccess,
+
     }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
         onSubmit: (user: userLoginModel) => dispatch({ type: USER_LOGIN_REQUEST, payload: user }),
-        storeToken: (token: tokenModel) => dispatch({ type: STORE_TOKEN, payload: token })
     }
 }
 

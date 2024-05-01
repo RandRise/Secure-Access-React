@@ -11,7 +11,11 @@ const initialState: userLoginState = {
 const userLoginReducer = (state = initialState, action: any): userLoginState => {
     switch (action.type) {
         case USER_LOGIN_SUCCESS:
-            return { ...state, response: action.payload, isUserLoginSuccess: true }
+            return {
+                ...state,
+                response: action.payload,
+                isUserLoginSuccess: true,
+            }
         default:
             return state;
     }

@@ -6,12 +6,14 @@ import createSagaMiddleware from "redux-saga";
 import { applyMiddleware } from "redux";
 import userLoginReducer from "./Reducers/userLoginReducer";
 import userAuthenticationReducer from "./Reducers/userReducer";
+import employeeReducer from "./Reducers/employeeReducer";
 
 const rootReducer = combineReducers({
     registrations: registrationReducer,
     confirmations: confirmationReducer,
     logins: userLoginReducer,
     userAuth: userAuthenticationReducer,
+    employees: employeeReducer,
 })
 
 const sagaMiddleWare = createSagaMiddleware();

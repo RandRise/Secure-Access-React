@@ -1,52 +1,75 @@
-import axios from "axios";
-import { IAuthTokens, TokenRefreshRequest, applyAuthTokenInterceptor, getBrowserLocalStorage } from 'axios-jwt'
+import axios, { AxiosInstance } from "axios";
 import { registrationModel } from "../Models/registrationModel";
 import { ICommonResponse } from "../Common/commonInterfaces";
 import { confirmationModel } from "../Models/confirmationModel";
 import { userLoginModel } from "../Models/userLoginModel";
 
-const REGISTER_API = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Auth/register';
-const CONFIRM_API = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Auth/confirm-email';
-const RESEND_VERIFICATION_CODE_API = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Auth/resend-confirm-code';
-const USER_LOGIN_API = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Auth/login';
-const REFRESH_TOKEN_API = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Auth/refresh-token';
+const baseURL = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api';
 
 
-const getStorage = getBrowserLocalStorage
-const loginAxiosInstance = axios.create({ baseURL: USER_LOGIN_API })
+const registerAPI = '/Auth/register';
+const confirmAPI = '/Auth/confirm-email';
+const resendVerificationCodeAPI = '/Auth/resend-confirm-code';
+const userLoginAPI = '/Auth/login';
+const refreshTokenAPI = '/Auth/refresh-token';
+const getEmployeesAPI = '/Employee/Employees'
 
-const requestRefresh: TokenRefreshRequest = async (refreshToken: string): Promise<IAuthTokens | string> => {
-    try {
-        const response = await axios.post(REFRESH_TOKEN_API, { refreshToken })
-
-        const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-        localStorage.setItem('Token', accessToken)
-        localStorage.setItem('RefreshToken', refreshToken)
-
-        return { accessToken, refreshToken: newRefreshToken };
-    } catch (error: any) {
-        console.log("Token refresh failed", error)
-
-        throw error.response?.data ?? error.message
+const api = axios.create({
+    baseURL: baseURL,
+    headers:{
+        Authorization: "Bearer " + localStorage.getItem('Token')
     }
-};
+})
 
-applyAuthTokenInterceptor(loginAxiosInstance, { requestRefresh, getStorage });
+api.interceptors.request.use(
+    (config) => {
+        const Token = localStorage.getItem('Token');
+        if (Token) {
+            config.headers.Authorization = `Bearer ${Token}`
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+
+)
+
+api.interceptors.response.use(
+    (response) => response,
+    async (response) => {
+        const originalRequest = response.config;
+
+        if (response.Code === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            try {
+                const RefreshToken = localStorage.getItem('RefreshToken');
+                const response = await axios.post(`${baseURL}${refreshTokenAPI}`, { RefreshToken });
+                const { Token } = response.data.Data;
+                localStorage.setItem('Token', Token);
+
+                originalRequest.headers.Authorization = `Bearer ${Token}`;
+                return axios(originalRequest);
+            } catch (error) {
+
+            }
+            return Promise.reject(response);
+        }
+    }
+
+)
 
 export class Authentication {
     static registerUserAPI = async (formData: registrationModel): Promise<ICommonResponse> => {
         try {
-            const response = await axios.post(REGISTER_API, formData);
+            const response = await axios.post(`${baseURL}${registerAPI}`, formData);
             return response.data;
         } catch (error: any) {
-            throw error.response?.data ?? error.message;
+            throw (error)
         }
     }
 
     static confirmUserAPI = async (formData: confirmationModel): Promise<ICommonResponse> => {
         try {
-            const response = await axios.post(CONFIRM_API, formData);
+            const response = await axios.post(`${baseURL}${confirmAPI}`, formData);
             return response.data;
         } catch (error: any) {
             throw error.response?.data ?? error.message;
@@ -55,7 +78,7 @@ export class Authentication {
 
     static resendVerificationCodeAPI = async (formData: registrationModel): Promise<ICommonResponse> => {
         try {
-            const response = await axios.post(RESEND_VERIFICATION_CODE_API, { email: formData });
+            const response = await axios.post(`${baseURL}${resendVerificationCodeAPI}`, { email: formData });
             return response.data;
         } catch (error: any) {
             throw error.response?.data ?? error.message;
@@ -64,12 +87,29 @@ export class Authentication {
 
     static loginAPI = async (formData: userLoginModel): Promise<ICommonResponse> => {
         try {
-            const response = await loginAxiosInstance.post(USER_LOGIN_API, formData);
+            const response = await api.post(`${baseURL}${userLoginAPI}`, formData);
+            console.log("Login API Response Data:", response.data); //  to see the response data
+            const { Token, RefreshToken } = response.data.Data;
+            console.log("Token:", Token); //to see the token value
+            console.log("RefreshToken:", RefreshToken); //  to see the refresh token value
+            localStorage.setItem('Token', Token);
+            localStorage.setItem('RefreshToken', RefreshToken);
+            api.defaults.headers.common['Authorization'] = `Bearer ${Token}`;
             return response.data;
         } catch (error: any) {
-            throw error.response?.data ?? error.message
+            throw error.response?.data ?? error.message;
         }
     }
-
-
+    
+}
+export class EmployeeServices {
+    static getEmployeesAPI = async ():Promise<ICommonResponse> => {
+        try {
+            const response = await api.get(`${baseURL}${getEmployeesAPI}`)
+            return response.data;
+        }catch (error) {
+            console.log("Error fetching employees",error)
+            throw error;
+        }
+    }
 }
