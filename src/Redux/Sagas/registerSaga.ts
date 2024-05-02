@@ -22,8 +22,8 @@ function* registerUserSaga(action: any): Generator<any, void, any> {
             yield put({ type: REGISTER_USER_SUCCESS, payload: response })
         }
 
-    } catch (response: any) {
-        yield put({ type: GET_GENERAL_RESPONSE, payload: response })
+    } catch (error) {
+        yield put({ type: GET_GENERAL_RESPONSE, payload: action.payload })
     }
 }
 

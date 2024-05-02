@@ -1,5 +1,5 @@
 export interface ICommonResponse {
     Code: number;
     Message: string;
-    Data: any | null; 
+    Data: string | null; 
 }

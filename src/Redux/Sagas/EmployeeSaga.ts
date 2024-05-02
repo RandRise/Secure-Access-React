@@ -1,4 +1,4 @@
-import { takeLatest, put, call, all } from "redux-saga/effects";
+import { put, call, all, takeEvery } from "redux-saga/effects";
 import {
     GET_EMPLOYEES_REQUEST,
     GET_EMPLOYEES_SUCCESS,
@@ -6,19 +6,19 @@ import {
 } from "../../Actions/actions";
 
 import { EmployeeServices } from "../../Services/apiService";
+
 function* getEmployees(): Generator<any, void, any> {
     try {
-
-        const response = yield EmployeeServices.getEmployeesAPI()
-            .then(r => r.Data);
-        yield put({ type: GET_EMPLOYEES_SUCCESS, payload: response })
-    } catch (response) {
-        yield put({ type: GET_GENERAL_RESPONSE, payload: response });
+        const response = yield call(EmployeeServices.getEmployeesAPI);
+        yield put({ type: GET_EMPLOYEES_SUCCESS, payload: response.Data }); // Dispatch action with received data
+    } catch (error) {
+        yield put({ type: GET_GENERAL_RESPONSE, payload: error });
     }
 }
 
+
 function* watchGetEmployeesSaga(): Generator<any, void, any> {
-    yield takeLatest(GET_EMPLOYEES_REQUEST, getEmployees)
+    yield takeEvery(GET_EMPLOYEES_REQUEST, getEmployees)
 }
 
 export default function* employeeSaga() {
