@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Form, Input, notification } from 'antd';
-import { registrationModel } from "../Models/registrationModel";
-import { REGISTER_USER_REQUEST } from "../Actions/actions";
-import { ICommonResponse } from "../Common/commonInterfaces";
+import { registrationModel } from "../../Models/registrationModel";
+import { REGISTER_USER_REQUEST } from "../../Actions/actions";
+import { ICommonResponse } from "../../Common/commonInterfaces";
 interface RegistrationFormProps {
     onSubmit: (user: registrationModel) => void;
     isSuccess: boolean;
@@ -14,15 +14,20 @@ interface RegistrationFormProps {
 const RegistrationForm: React.FC<RegistrationFormProps> = (props: RegistrationFormProps) => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
+    const [notificationShown, setNotificationShown] = useState(false);
+
 
     useEffect(() => {
-        if (props.response) {
-            (props.response?.Code === 200) ?
-                notification.success({ message: props.response?.Message })
-                :
-                notification.error({ message: props.response.Message })
+        if (props.response && !notificationShown) {
+          console.log("Response Message:", props.response.Message);
+          if (props.response.Code === 200) {
+            notification.success({ message: props.response.Message });
+          } else {
+            notification.error({ message: props.response.Message });
+          }
+          setNotificationShown(true);
         }
-    }, [props.response])
+      }, [props.response, notificationShown]);
 
 
     useEffect(() => {

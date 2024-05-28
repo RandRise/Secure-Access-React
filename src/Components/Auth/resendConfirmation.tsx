@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { Button, notification } from 'antd';
-import { RESEND_VERIFICATION_CODE_REQUEST } from "../Actions/actions";
-import { ICommonResponse } from "../Common/commonInterfaces";
+import { RESEND_VERIFICATION_CODE_REQUEST } from "../../Actions/actions";
+import { ICommonResponse } from "../../Common/commonInterfaces";
 
 interface ResendVerificationButtonProps {
     onSubmit: (email: string | null) => void;

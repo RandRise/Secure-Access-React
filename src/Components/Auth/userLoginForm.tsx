@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { useNavigate } from 'react-router-dom';
 import { Button, Card, Form, Input, notification } from 'antd';
-import { userLoginModel } from '../Models/userLoginModel'
-import { ICommonResponse } from '../Common/commonInterfaces';
-import { USER_LOGIN_REQUEST } from '../Actions/actions';
-import axios from 'axios';
+import { userLoginModel } from '../../Models/userLoginModel'
+import { ICommonResponse } from '../../Common/commonInterfaces';
+import { USER_LOGIN_REQUEST } from '../../Actions/actions';
 interface LoginFormProps {
     onSubmit: (user: userLoginModel) => void;
     response: ICommonResponse
@@ -15,28 +14,28 @@ interface LoginFormProps {
 const UserLoginForm: React.FC<LoginFormProps> = (props: LoginFormProps) => {
     const [form] = Form.useForm();
     const navigate = useNavigate();
-
+    const [notificationShown, setNotificationShown] = useState(false);
 
     useEffect(() => {
-        if (props.response) {
-            (props.response.Code === 200) ? notification.success({ message: props.response.Message })
-                :
-                notification.error({ message: props.response.Message })
+        if (props.response && !notificationShown) {
+            console.log("Response Message:", props.response.Message);
+            if (props.response.Code === 200) {
+                notification.success({ message: props.response.Message });
+            } else {
+                notification.error({ message: props.response.Message });
+            }
+            setNotificationShown(true);
         }
-    }, [props.response])
 
-    useEffect(() => {
         if (props.isUserLoginSuccess) {
             navigate("/employee");
         }
-    }, [props.isUserLoginSuccess, navigate]);
-
+    }, [props.response, props.isUserLoginSuccess, navigate]);
 
     const onFinish = (values: userLoginModel) => {
         props.onSubmit(values);
         form.resetFields();
- 
-}
+    }
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f0f2f5' }}>

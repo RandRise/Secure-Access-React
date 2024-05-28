@@ -18,29 +18,28 @@ function* registerUserSaga(action: any): Generator<any, void, any> {
     try {
         const response = yield call(Authentication.registerUserAPI, action.payload);
         if (response.Code === 200) {
-
-            yield put({ type: REGISTER_USER_SUCCESS, payload: response })
+            yield put({ type: REGISTER_USER_SUCCESS, payload: response });
         }
-
+        // else {
+        //     // const errorMessage = response.Message;
+        //     // yield put({ type: GET_GENERAL_RESPONSE, payload: errorMessage });
+        // }
     } catch (error) {
-        yield put({ type: GET_GENERAL_RESPONSE, payload: action.payload })
+        yield put({ type: GET_GENERAL_RESPONSE, payload: error });
     }
 }
 
 function* confirmEmailSaga(action: any): Generator<any, void, any> {
     try {
-        console.log("Email confirmation", action)
-
         const response = yield call(Authentication.confirmUserAPI, action.payload);
+        console.log('Confirmation API Response:', response);
         if (response.Code === 200) {
 
             yield put({ type: CONFIRM_EMAIL_SUCCESS, payload: response });
-        } else {
-            yield put({ type: GET_GENERAL_RESPONSE, payload: response })
         }
+    } catch (error: any) {
 
-    } catch (error) {
-        console.error("Error confirming email:", error);
+        yield put({ type: GET_GENERAL_RESPONSE, payload: error });
     }
 }
 
@@ -51,11 +50,9 @@ function* resendVerificationCodeSaga(action: any): Generator<any, void, any> {
 
         if (response.Code === 200) {
             yield put({ type: RESEND_VERIFICATION_CODE, payload: response });
-        } else {
-            yield put({ type: GET_GENERAL_RESPONSE, payload: response })
         }
     } catch (error) {
-        console.error("Error", error)
+        yield put({ type: GET_GENERAL_RESPONSE, payload: error })
     }
 }
 
@@ -66,11 +63,11 @@ function* userLoginSaga(action: any): Generator<any, void, any> {
 
         if (response.Code === 200) {
             yield put({ type: USER_LOGIN_SUCCESS, payload: response });
-        } else {
-            yield put({ type: GET_GENERAL_RESPONSE, payload: response });
+            console.log('Login API Response:', response);
         }
-    } catch (error) {
-        console.error("Error Logging In", error)
+
+    } catch (error: any) {
+        yield put({ type: GET_GENERAL_RESPONSE, payload: error })
     }
 }
 

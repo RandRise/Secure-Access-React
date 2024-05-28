@@ -1,8 +1,10 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 import { registrationModel } from "../Models/registrationModel";
 import { ICommonResponse } from "../Common/commonInterfaces";
 import { confirmationModel } from "../Models/confirmationModel";
 import { userLoginModel } from "../Models/userLoginModel";
+import { AddEmployeeModel } from "../Models/AddEmployeeModel";
+import { EmployeeModel } from "../Models/employeeModel";
 
 const baseURL = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api';
 
@@ -13,6 +15,10 @@ const resendVerificationCodeAPI = 'https://task-follow-up.v2202305135856227727.u
 const userLoginAPI = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Auth/login';
 const refreshTokenAPI = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Auth/refresh-token';
 const getEmployeesAPI = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Employee/Employees';
+const addEmployeeAPI = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Employee/AddEmployee';
+const deleteEmployeeAPI = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Employee/DeleteEmployee';
+const updateEmployeeAPI = 'https://task-follow-up.v2202305135856227727.ultrasrv.de/api/Employee/UpdateEmployee';
+
 const api = axios.create({
     baseURL: baseURL,
     headers: {
@@ -52,7 +58,7 @@ api.interceptors.response.use(
 
                 return axios(originalRequest);
             } catch (error) {
-                
+
             }
             return Promise.reject(error);
         }
@@ -65,19 +71,20 @@ export class Authentication {
             const response = await axios.post(registerAPI, formData);
             return response.data;
         } catch (error: any) {
-            throw (error)
+            throw error.response?.data ?? error.message;
         }
     }
 
     static confirmUserAPI = async (formData: confirmationModel): Promise<ICommonResponse> => {
         try {
-            const response = await api.post(confirmAPI, formData);
+            const response = await axios.post(confirmAPI, formData);
             return response.data;
         } catch (error: any) {
+
             throw error.response?.data ?? error.message;
+
         }
     }
-
     static resendVerificationCodeAPI = async (formData: registrationModel): Promise<ICommonResponse> => {
         try {
             const response = await axios.post(resendVerificationCodeAPI, { email: formData });
@@ -89,7 +96,8 @@ export class Authentication {
 
     static loginAPI = async (formData: userLoginModel): Promise<ICommonResponse> => {
         try {
-            const response = await api.post(userLoginAPI, formData);
+            const response = await axios.post(userLoginAPI, formData);
+
             const Token = response.data.Data.Token;
             const RefreshToken = response.data.Data.RefreshToken;
 
@@ -98,21 +106,53 @@ export class Authentication {
 
             api.defaults.headers.common['Authorization'] = `Bearer ${Token}`;
             return response.data;
+
         } catch (error: any) {
-            throw error.response?.data ?? error.message;
+
+            throw error;
         }
     }
 }
-
 export class EmployeeServices {
     static getEmployeesAPI = async (): Promise<ICommonResponse> => {
         try {
             const response = await api.get(getEmployeesAPI);
-            console.log("EmployeeResponseAPi", response);
             return response.data;
         } catch (error: any) {
 
             throw error.response?.data ?? error.message;
         }
     }
+
+    static addEmployee = async (formData: AddEmployeeModel): Promise<ICommonResponse> => {
+        try {
+            const response = await api.post(addEmployeeAPI, formData);
+            return response.data;
+        } catch (error: any) {
+            throw error.response?.data ?? error.message;
+        }
+    }
+
+    static deleteEmployee = async (Id: number): Promise<ICommonResponse> => {
+        try {
+            const response = await api.post(deleteEmployeeAPI, { Id });
+            return response.data;
+        } catch (error: any) {
+            throw error.response?.data ?? error.message;
+        }
+    }
+
+    static updateEmployee = async (formData: EmployeeModel): Promise<ICommonResponse> => {
+        try {
+          
+            const response = await api.post(updateEmployeeAPI, formData);
+            console.log("API SERVICE ",response)
+
+            return response.data;
+        } catch (error: any) {
+            throw error.response?.data ?? error.message;
+        }
+    };
+
+
 }

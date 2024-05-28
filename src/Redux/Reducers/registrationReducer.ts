@@ -20,7 +20,7 @@ const registrationReducer = (state = initialState, action: any): registrationSta
         case RESEND_VERIFICATION_CODE:
             return { ...state, loading: false, response: action.payload, isSuccess: false };
         case GET_GENERAL_RESPONSE:
-            return { ...state, response: action.payload };
+            return { loading: false, response: action.payload, isSuccess: false };
         default:
             return state;
     }
